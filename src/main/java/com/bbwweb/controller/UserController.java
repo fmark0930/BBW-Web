@@ -24,7 +24,6 @@ public class UserController {
 
     @RequestMapping("/login")
     public Result userLogin(@RequestParam(name = "code") String code){
-        System.out.println(code);
         Result result =userService.UserLogin(code);
         return result;
     }
