@@ -7,9 +7,11 @@
 package com.bbwweb.Util;
 
 import com.fasterxml.jackson.databind.ser.Serializers;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.apache.ibatis.jdbc.Null;
 import org.springframework.boot.autoconfigure.ssl.SslBundleProperties;
 
 import javax.crypto.SecretKey;
@@ -24,21 +26,31 @@ public class JwtUtil {
     private static final String SECRET_KEY = "fmark0930"; // 替换为你的密钥
     private static final long EXPIRATION_TIME = 259200000; // 过期时间，这里设置为三天的毫秒数
 
-    public static String generateToken(Map<String,Object> json) {
+    public static String getToken(Map<String,Object> json) {
 
         JwtBuilder jwtBuilder = Jwts.builder();
 
         Date expirationDate = new Date(System.currentTimeMillis() + EXPIRATION_TIME);//计算出token的过期时间
 
         return jwtBuilder
-                .setSubject(UUID.randomUUID().toString())  //要存储得到json数据
+                //.setSubject()  //token标题
                 .setExpiration(expirationDate)  //设置过期时间
                 .setIssuedAt(new Date())  //token的生成时间
-                .setIssuer("your_issuer")//发行者
                 .setAudience("wxmini")
                 .signWith(SignatureAlgorithm.HS256,SECRET_KEY)
-                .claim("msg",json)
+                .addClaims(json)
                 .compact();
     }
+
+    public static Claims verifyToken(String token){
+        Claims claims =  Jwts.parser()
+                .setSigningKey(SECRET_KEY)//设置签名密钥
+                .parseClaimsJws(token)//解析声明Jws
+                .getBody();
+
+        System.out.println(claims);
+        return claims;
+    }
+
 
 }

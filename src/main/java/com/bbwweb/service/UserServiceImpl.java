@@ -9,10 +9,12 @@ package com.bbwweb.service;
 import cn.hutool.http.HttpUtil;
 
 import com.bbwweb.Result.Result;
+import com.bbwweb.Util.JwtUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -36,10 +38,13 @@ public class UserServiceImpl implements UserService {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             // 将 JSON 字符串转换为 Map<String, Object> 对象
-            Map<String,Object> resultMap = objectMapper.readValue(res, Map.class);
+            Map<String,Object> resultMap = objectMapper.readValue(res, Map.class);  //将获取到的微信返回数据转换为map格式
 
-            System.out.println(resultMap);
+            String token = JwtUtil.getToken(resultMap);   //申城token
+           // System.out.println(token);
+            resultMap.put("token",token);    //将token装入要返回的json
             //String uuid = UUID.randomUUID().toString();
+
             return Result.success(resultMap);
             // 打印转换后的 Map 对象
         } catch (JsonProcessingException e) {
