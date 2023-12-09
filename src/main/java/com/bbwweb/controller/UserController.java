@@ -27,4 +27,10 @@ public class UserController {
         Result result =userService.UserLogin(code);
         return result;
     }
+    @RequestMapping("/getPhone")
+    public Result getPhone(@RequestParam(name = "code") String code){
+        Result result =userService.getPhoneNumber(code);
+        return result;
+    }
+
 }
